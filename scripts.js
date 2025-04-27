@@ -473,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showConfirm('Bạn có chắc chắn muốn làm lại từ đầu?', (confirmed) => {
             if (confirmed) {
                 resetApp();
+                resetApp();
             }
         });
     });
