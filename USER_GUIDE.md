@@ -68,3 +68,22 @@ Zero GPX Route Generator là công cụ giúp bạn tạo ra các tuyến đư�
 
 - **Không thể xuất file GPX**: Đảm bảo bạn đã vẽ ít nhất 2 điểm trên bản đồ
 - **File GPX không hiển thị đúng trên Strava**: Kiểm tra lại các thông số tốc độ và thời gian đã được thiết lập hợp lý 
+
+## Lưu ý khi import vào Strava
+
+### Hiển thị bản đồ hoạt động (màu cam thay vì màu xám)
+
+Để hiển thị bản đồ của hoạt động đã import từ file GPX trên Strava (hiển thị map màu cam thay vì màu xám), bạn có thể thực hiện theo các bước sau:
+
+1. **Truy cập hoạt động**:
+   - Đăng nhập vào Strava, mở hoạt động bạn muốn chỉnh sửa.
+
+2. **Chỉnh sửa hoạt động**:
+   - Nhấn vào nút hình bút chì (Edit) hoặc ⋮ (More) > Edit Activity.
+
+3. **Thiết lập quyền riêng tư**:
+   - Trong mục Privacy Controls, chọn Everyone (Công khai) hoặc Followers (Người theo dõi).
+   - Lưu ý: Bản đồ sẽ hiển thị màu cam khi hoạt động được đặt ở chế độ công khai hoặc người theo dõi.
+
+4. **Lưu thay đổi**:
+   - Nhấn Save để hoàn tất. 
