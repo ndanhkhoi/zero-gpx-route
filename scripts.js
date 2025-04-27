@@ -35,34 +35,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxOffsetInput = document.getElementById('max-offset');
     const elevationInput = document.getElementById('elevation');
     
-    // Custom alert elements
-    const customAlert = document.getElementById('custom-alert');
-    const alertMessage = document.getElementById('alert-message');
-    const alertOkBtn = document.getElementById('alert-ok');
+    // Bootstrap modal elements
+    const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const alertMessageEl = document.getElementById('alert-message');
+    const confirmMessageEl = document.getElementById('confirm-message');
+    const confirmOkBtn = document.getElementById('confirm-ok');
     
     // Set default start time (current time)
     const now = dayjs().tz("Asia/Ho_Chi_Minh");
     startTimeInput.value = now.format('YYYY-MM-DDTHH:mm');
     
-    // Custom alert function
+    // Alert function using Bootstrap modal
     function showAlert(message) {
-        alertMessage.textContent = message;
+        alertMessageEl.textContent = message;
+        alertModal.show();
+    }
+    
+    // Confirm function using Bootstrap modal
+    function showConfirm(message, callback) {
+        confirmMessageEl.textContent = message;
         
-        // Reset footer to show just the OK button
-        const alertFooter = document.getElementById('alert-footer');
-        alertFooter.innerHTML = '<button id="alert-ok" class="primary">OK</button>';
+        // Remove previous event listener to avoid duplicates
+        const newConfirmBtn = confirmOkBtn.cloneNode(true);
+        confirmOkBtn.parentNode?.replaceChild(newConfirmBtn, confirmOkBtn);
         
-        customAlert.classList.add('show');
+        // Add new event listener
+        newConfirmBtn.addEventListener('click', () => {
+            confirmModal.hide();
+            if (callback) callback(true);
+        });
         
-        // Focus on OK button
-        setTimeout(() => {
-            document.getElementById('alert-ok').focus();
-            
-            // Add event listener to the newly created button
-            document.getElementById('alert-ok').addEventListener('click', () => {
-                customAlert.classList.remove('show');
-            });
-        }, 100);
+        // Show the modal
+        confirmModal.show();
+        
+        // Set up cancel button
+        document.getElementById('confirm-cancel').onclick = () => {
+            if (callback) callback(false);
+        };
     }
     
     // Update button states
@@ -460,41 +470,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Reset app button click handler
     resetAppBtn.addEventListener('click', () => {
-        if (routePoints.length > 0) {
-            // Use custom alert instead of browser confirm
-            const confirmDiv = document.createElement('div');
-            confirmDiv.innerHTML = `
-                <p>Bạn có chắc chắn muốn làm lại từ đầu?</p>
-            `;
-            
-            alertMessage.innerHTML = '';
-            alertMessage.appendChild(confirmDiv);
-            
-            // Setup footer with confirm buttons
-            const alertFooter = document.getElementById('alert-footer');
-            alertFooter.innerHTML = `
-                <button id="confirm-cancel" class="secondary">Hủy</button>
-                <button id="confirm-reset" class="primary">Đồng ý</button>
-            `;
-            
-            customAlert.classList.add('show');
-            
-            // Setup event handlers
-            document.getElementById('confirm-cancel').addEventListener('click', () => {
-                // Restore the OK button
-                alertFooter.innerHTML = '<button id="alert-ok" class="primary">OK</button>';
-                customAlert.classList.remove('show');
-            });
-            
-            document.getElementById('confirm-reset').addEventListener('click', () => {
-                // Restore the OK button
-                alertFooter.innerHTML = '<button id="alert-ok" class="primary">OK</button>';
-                customAlert.classList.remove('show');
+        showConfirm('Bạn có chắc chắn muốn làm lại từ đầu?', (confirmed) => {
+            if (confirmed) {
                 resetApp();
-            });
-        } else {
-            resetApp();
-        }
+            }
+        });
     });
     
     // Export GPX

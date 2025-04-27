@@ -2,98 +2,119 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vẽ đường chạy bộ giả lập</title>
     <link rel="icon" type="image/svg+xml" href="zero-favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Vẽ đường chạy bộ giả lập</h1>
-        <div class="header-links">
-            <a href="https://github.com/ndanhkhoi/zero-gpx-route" target="_blank" rel="noopener noreferrer">
+    <div class="container-fluid px-4 py-4">
+        <h1 class="text-center mb-3">Vẽ đường chạy bộ giả lập</h1>
+        <div class="header-links mb-4 d-flex justify-content-center">
+            <a href="https://github.com/ndanhkhoi/zero-gpx-route" target="_blank" rel="noopener noreferrer" class="mx-2">
                 <i class="fab fa-github"></i> GitHub
             </a>
-            <a href="https://github.com/ndanhkhoi/zero-gpx-route/blob/main/USER_GUIDE.md" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/ndanhkhoi/zero-gpx-route/blob/main/USER_GUIDE.md" target="_blank" rel="noopener noreferrer" class="mx-2">
                 <i class="fas fa-book"></i> Hướng dẫn sử dụng
             </a>
         </div>
-        <div class="content">
-            <div id="map"></div>
-            <div class="control-panel">
-                <div class="button-group">
-                    <button id="add-point" class="primary"><i class="fas fa-draw-polygon"></i> Thêm điểm</button>
-                    <button id="reset-app"><i class="fas fa-redo-alt"></i> Làm lại</button>
-                    <button id="export-gpx" class="primary" disabled><i class="fas fa-file-export"></i> Xuất file GPX</button>
+        <div class="content row g-4">
+            <div class="col-lg-8 col-md-7 col-sm-12 p-0 px-md-4">
+                <div id="map"></div>
+            </div>
+            <div class="control-panel col-lg-4 col-md-5 col-sm-12 p-3">
+                <div class="mb-3 d-flex flex-wrap justify-content-center">
+                    <button id="add-point" class="btn btn-primary m-1"><i class="fas fa-draw-polygon"></i> <span class="btn-text">Thêm điểm</span></button>
+                    <button id="reset-app" class="btn btn-secondary m-1"><i class="fas fa-redo-alt"></i> <span class="btn-text">Làm lại</span></button>
+                    <button id="export-gpx" class="btn btn-primary m-1" disabled><i class="fas fa-file-export"></i> <span class="btn-text">Xuất file GPX</span></button>
+                    <button id="preview-route" class="btn btn-primary m-1" disabled><i class="fas fa-eye"></i> <span class="btn-text">Xem trước</span></button>
+                </div>
+                
+                <div class="route-info mb-3 py-2 border-top border-bottom">
+                    <div id="total-distance" class="mb-2">Tổng khoảng cách: 0 km</div>
+                    <div id="total-time">Tổng thời gian: 0 phút</div>
                 </div>
                 
                 <div class="settings">
-                    <h3>Thông số</h3>
-                    <div class="setting-item">
-                        <label for="route-type">Loại hoạt động</label>
-                        <select id="route-type">
+                    <h3 class="mb-3">Thông số</h3>
+                    <div class="setting-item mb-3">
+                        <label for="route-type" class="form-label">Loại hoạt động</label>
+                        <select id="route-type" class="form-select">
                             <option value="run">Chạy bộ</option>
                             <option value="walk">Đi bộ</option>
                         </select>
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="speed">Tốc độ chạy (phút/km)</label>
-                        <input type="number" id="speed" min="1" max="30" value="9.6" step="0.01">
+                    <div class="setting-item mb-3">
+                        <label for="speed" class="form-label">Tốc độ chạy (phút/km)</label>
+                        <input type="number" id="speed" min="1" max="30" value="9.6" step="0.01" class="form-control">
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="duplicate-count">Số vòng lặp lại</label>
-                        <input type="number" id="duplicate-count" min="1" max="100" value="1" step="1">
+                    <div class="setting-item mb-3">
+                        <label for="duplicate-count" class="form-label">Số vòng lặp lại</label>
+                        <input type="number" id="duplicate-count" min="1" max="100" value="1" step="1" class="form-control">
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="min-offset">Độ lệch nhỏ nhất (m)</label>
-                        <input type="number" id="min-offset" min="0.01" max="10" value="0.05" step="0.01">
+                    <div class="setting-item mb-3">
+                        <label for="min-offset" class="form-label">Độ lệch nhỏ nhất (m)</label>
+                        <input type="number" id="min-offset" min="0.01" max="10" value="0.05" step="0.01" class="form-control">
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="max-offset">Độ lệch lớn nhất (m)</label>
-                        <input type="number" id="max-offset" min="0.01" max="10" value="0.2" step="0.01">
+                    <div class="setting-item mb-3">
+                        <label for="max-offset" class="form-label">Độ lệch lớn nhất (m)</label>
+                        <input type="number" id="max-offset" min="0.01" max="10" value="0.2" step="0.01" class="form-control">
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="elevation">Độ cao mặc định (m)</label>
-                        <input type="number" id="elevation" min="0" value="10" step="1">
+                    <div class="setting-item mb-3">
+                        <label for="elevation" class="form-label">Độ cao mặc định (m)</label>
+                        <input type="number" id="elevation" min="0" value="10" step="1" class="form-control">
                     </div>
                     
-                    <div class="setting-item">
-                        <label for="start-time">Thời gian bắt đầu chạy</label>
-                        <input type="datetime-local" id="start-time">
+                    <div class="setting-item mb-3">
+                        <label for="start-time" class="form-label">Thời gian bắt đầu chạy</label>
+                        <input type="datetime-local" id="start-time" class="form-control">
                     </div>
-                </div>
-                
-                <div class="button-group" style="margin-top: 20px;">
-                    <button id="preview-route" class="primary" disabled><i class="fas fa-eye"></i> Xem trước</button>
-                </div>
-                
-                <div class="route-info">
-                    <div id="total-distance">Tổng khoảng cách: 0 km</div>
-                    <div id="total-time">Tổng thời gian: 0 phút</div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Custom Alert Dialog -->
-    <div id="custom-alert" class="custom-alert">
-        <div class="alert-content">
-            <div class="alert-header">
-                <i class="fas fa-info-circle"></i>
-                <h3>Thông báo</h3>
+    <!-- Bootstrap Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel"><i class="fas fa-info-circle me-2"></i>Thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="alert-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="alert-ok" data-bs-dismiss="modal">OK</button>
+                </div>
             </div>
-            <div class="alert-body">
-                <p id="alert-message"></p>
-            </div>
-            <div class="alert-footer" id="alert-footer">
-                <button id="alert-ok" class="primary">OK</button>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Confirm Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel"><i class="fas fa-question-circle me-2"></i>Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="confirm-cancel" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="confirm-ok">Đồng ý</button>
+                </div>
             </div>
         </div>
     </div>
@@ -102,6 +123,7 @@
     <script src="https://unpkg.com/dayjs@1.11.9/dayjs.min.js"></script>
     <script src="https://unpkg.com/dayjs@1.11.9/plugin/utc.js"></script>
     <script src="https://unpkg.com/dayjs@1.11.9/plugin/timezone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html> 
