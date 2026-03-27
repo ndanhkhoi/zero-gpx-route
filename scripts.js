@@ -34,13 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const minOffsetInput = document.getElementById('min-offset');
     const maxOffsetInput = document.getElementById('max-offset');
     const elevationInput = document.getElementById('elevation');
-    
+    const drawStatusEl = document.getElementById('draw-status');
+
     // Bootstrap modal elements
     const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
     const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
     const alertMessageEl = document.getElementById('alert-message');
     const confirmMessageEl = document.getElementById('confirm-message');
-    const confirmOkBtn = document.getElementById('confirm-ok');
+    let confirmOkBtn = document.getElementById('confirm-ok');
     
     // Set default start time (current time)
     const now = dayjs().tz("Asia/Ho_Chi_Minh");
@@ -59,9 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove previous event listener to avoid duplicates
         const newConfirmBtn = confirmOkBtn.cloneNode(true);
         confirmOkBtn.parentNode?.replaceChild(newConfirmBtn, confirmOkBtn);
-        
+        confirmOkBtn = newConfirmBtn;
+
         // Add new event listener
-        newConfirmBtn.addEventListener('click', () => {
+        confirmOkBtn.addEventListener('click', () => {
             confirmModal.hide();
             if (callback) callback(true);
         });
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update button states
     function updateButtonStates() {
         const hasPoints = routePoints.length > 1;
-        
+
         if (isDrawing) {
             // While drawing, disable all buttons except Add Point
             exportGpxBtn.disabled = true;
@@ -89,7 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
             exportGpxBtn.disabled = !hasPoints;
             previewRouteBtn.disabled = !hasPoints;
         }
-        
+
+        if (drawStatusEl) {
+            drawStatusEl.textContent = isDrawing ? 'Đang vẽ điểm' : (hasPoints ? 'Sẵn sàng xuất GPX' : 'Sẵn sàng');
+            drawStatusEl.classList.toggle('is-drawing', isDrawing);
+        }
+
         // Setting inputs should always be enabled
         speedInput.disabled = false;
         startTimeInput.disabled = false;
@@ -105,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isDrawing = !isDrawing;
         
         if (isDrawing) {
-            addPointBtn.innerHTML = '<i class="fas fa-hand-paper"></i> Đang vẽ... (Bấm để dừng)';
+            addPointBtn.innerHTML = '<i class="fas fa-hand-paper"></i> Dừng vẽ';
             addPointBtn.classList.add('active');
             map.on('click', onMapClick);
         } else {
-            addPointBtn.innerHTML = '<i class="fas fa-draw-polygon"></i> Thêm điểm';
+            addPointBtn.innerHTML = '<i class="fas fa-draw-polygon"></i> Bắt đầu vẽ';
             addPointBtn.classList.remove('active');
             map.off('click', onMapClick);
         }
@@ -424,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // If we're in drawing mode, exit it
         if (isDrawing) {
             isDrawing = false;
-            addPointBtn.innerHTML = '<i class="fas fa-draw-polygon"></i> Thêm điểm';
+            addPointBtn.innerHTML = '<i class="fas fa-draw-polygon"></i> Bắt đầu vẽ';
             addPointBtn.classList.remove('active');
             map.off('click', onMapClick);
         }
@@ -472,7 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
     resetAppBtn.addEventListener('click', () => {
         showConfirm('Bạn có chắc chắn muốn làm lại từ đầu?', (confirmed) => {
             if (confirmed) {
-                resetApp();
                 resetApp();
             }
         });
