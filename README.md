@@ -29,7 +29,7 @@ git clone https://github.com/ndanhkhoi/zero-gpx-route.git
 
 2. Mở file `index.html` trong trình duyệt web để sử dụng ứng dụng.
 
-Hoặc truy cập phiên bản trực tuyến tại: [https://zero-gpx-route.ndanhkhoi.name.vn]
+Hoặc truy cập phiên bản trực tuyến tại: [https://zero-gpx-route.ndanhkhoi.name.vn](https://zero-gpx-route.ndanhkhoi.name.vn)
 
 ## Tương thích với thiết bị di động
 
