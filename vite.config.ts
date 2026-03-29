@@ -6,5 +6,15 @@ export default defineConfig({
   publicDir: 'public',
   build: {
     outDir: 'dist',
+    chunkSizeWarningLimit: 1100,
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('maplibre-gl')) {
+            return 'maplibre'
+          }
+        },
+      },
+    },
   },
 })
