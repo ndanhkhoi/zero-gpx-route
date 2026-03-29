@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { saveAs } from 'file-saver'
 import type { LatLng, RouteType } from '../types/route'
 import { generateActivityName, generateGPX } from './gpx-generator'
 
@@ -24,19 +25,10 @@ export function exportRouteAsGpx(args: ExportRouteArgs) {
   const activityName = generateActivityName(startTime, routeType)
   const gpxContent = generateGPX(points, speedMetersSec, startTime, activityName, elevation)
 
-  const blob = new Blob([gpxContent], { type: 'application/gpx+xml' })
-  const url = URL.createObjectURL(blob)
-
+  const blob = new Blob([gpxContent], { type: 'application/gpx+xml;charset=utf-8' })
   const formattedStartTime = format(startTime, 'yyyyMMddHHmm')
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${activityName.replace(/\s+/g, '_')}_${formattedStartTime}.gpx`
-  document.body.appendChild(a)
-  a.addEventListener('click', () => {
-    document.body.removeChild(a)
-    window.URL.revokeObjectURL(url)
-  }, { once: true })
-  a.click()
+  const filename = `${activityName.replace(/\s+/g, '_')}_${formattedStartTime}.gpx`
+  saveAs(blob, filename)
 
   onSuccess('File GPX đã được tạo thành công!')
 }
