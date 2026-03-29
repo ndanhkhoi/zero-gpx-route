@@ -8,6 +8,7 @@ export function createMapInstance(): maplibregl.Map {
     style: 'https://tiles.openfreemap.org/styles/liberty',
     center: DEFAULT_CENTER,
     zoom: 16,
+    attributionControl: false,
   })
 
   map.addControl(new maplibregl.NavigationControl({ showCompass: true, showZoom: true }), 'top-right')

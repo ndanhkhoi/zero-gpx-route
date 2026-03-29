@@ -13,6 +13,12 @@ import type { DrawMode, LatLng, RouteType } from './types/route'
 import { showAlert, showConfirm } from './ui/modal'
 import { updateButtonStates, updateRouteInfo } from './ui/status'
 
+// Hide loading spinner — runs only after CSS + all deps are loaded
+const loader = document.getElementById('loader')
+const app = document.getElementById('app')
+if (loader) loader.remove()
+if (app) app.style.display = 'block'
+
 const PRESETS: Record<RouteType, { paceMinPerKm: number; offsetMinMeters: number; offsetMaxMeters: number; elevation: number }> = {
   run: { paceMinPerKm: 5.5, offsetMinMeters: 0.05, offsetMaxMeters: 0.2, elevation: 10 },
   walk: { paceMinPerKm: 12, offsetMinMeters: 0.1, offsetMaxMeters: 0.5, elevation: 5 },
