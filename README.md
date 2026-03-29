@@ -1,53 +1,80 @@
 # Zero GPX Route Generator
 
-Zero GPX Route Generator là một công cụ trực tuyến cho phép người dùng vẽ và tạo ra các tuyến đường chạy bộ giả lập dưới định dạng GPX để tải lên các ứng dụng theo dõi hoạt động thể thao như Strava, Garmin Connect, và các ứng dụng tương tự.
+Công cụ trực tuyến giúp vẽ và tạo tuyến đường chạy bộ/đi bộ giả lập dưới định dạng GPX.
 
-## Tính năng chính
+Dự án được deploy tại [ghostrun.khoinda.vn](https://ghostrun.khoinda.vn).
 
-- **Vẽ tuyến đường chạy bộ** trên bản đồ với giao diện đơn giản, trực quan
-- **Làm mịn đường chạy** bằng cách tự động thêm các điểm nội suy giữa các điểm đánh dấu
-- **Tạo nhiều vòng lặp lại** với độ lệch ngẫu nhiên để tạo ra các tuyến đường đa dạng
-- **Xuất file GPX** với các thông số như thời gian, tốc độ, độ cao được thiết lập tùy chỉnh
-- **Xem trước** tuyến đường hoàn chỉnh trước khi xuất file
-- **Tùy chỉnh nhiều thông số** như tốc độ chạy, thời gian bắt đầu, độ cao
-- **Hoàn toàn tương thích** với các thiết bị di động và màn hình có kích thước khác nhau
+## Tính năng
 
-## Công nghệ sử dụng
+- **Hai chế độ vẽ** — Click từng điểm hoặc vẽ tự do (freehand) trên bản đồ
+- **Tìm kiếm địa điểm** qua Nominatim geocoder
+- **Preview real-time** — thay đổi thông số và xem tuyến đường cập nhật ngay trên bản đồ
+- **Tạo nhiều vòng lặp** với độ lệch ngẫu nhiên (seeded) để tạo lộ trình đa dạng, tự nhiên
+- **Transition curve** giữa các vòng lặp bằng đường cong Bezier
+- **Preset tự động** — Chuyển đổi giữa Chạy bộ/Đi bộ sẽ tự động điều chỉnh pace, độ lệch, độ cao
+- **Xuất GPX** với timestamp, elevation, và tên file tự động theo thời gian trong ngày
+- **Responsive** — hoạt động trên desktop, tablet, và mobile
+- **Hỗ trợ touch** — vẽ tự do bằng cảm ứng trên di động
 
-- HTML/CSS/JavaScript thuần
-- [Bootstrap](https://getbootstrap.com/) cho thiết kế responsive
-- [Leaflet.js](https://leafletjs.com/) cho hiển thị bản đồ
-- [Day.js](https://day.js.org/) cho xử lý thời gian
-- [Font Awesome](https://fontawesome.com/) cho các biểu tượng
+## Tech Stack
 
-## Cài đặt và sử dụng
+| Layer | Công nghệ |
+|-------|-----------|
+| Framework | Vite 8 + TypeScript 6 |
+| Map | MapLibre GL JS |
+| Styling | Tailwind CSS v4 + custom theme |
+| Date/Time | date-fns + date-fns-tz |
+| Icons | Font Awesome 6 |
 
-1. Clone repository này:
+## Cấu trúc source
+
 ```
-git clone https://github.com/ndanhkhoi/zero-gpx-route.git
+src/
+  main.ts                  Entry point, orchestration
+  types/route.ts           TypeScript types (LatLng, DrawMode, RouteType)
+  state/app-state.ts       Centralized app state
+  dom/elements.ts          DOM element references
+  map/
+    map-instance.ts        MapLibre map initialization
+    geocoder.ts            Nominatim API + debounce
+    geocoder-ui.ts         Geocoder UI component
+    route-layer.ts         GeoJSON source/layer for route line
+  drawing/
+    click-drawing.ts       Click mode: marker placement + interpolation
+    freehand-drawing.ts    Freehand mode: pointer/touch tracking
+    interpolation.ts       Point interpolation between markers
+  preview/
+    loop-builder.ts        Loop duplication + transition curves
+    preview-renderer.ts    Preview layer management + RAF debouncing
+  export/
+    gpx-generator.ts       GPX XML generation
+    export-controller.ts   Export orchestration + file download
+  shared/
+    geo.ts                 Haversine distance
+    time.ts                Timezone-aware time helpers (Asia/Ho_Chi_Minh)
+    random.ts              Seeded PRNG for deterministic offsets
+  ui/
+    modal.ts               Alert + confirm dialogs
+    status.ts              Button states + route info display
+  styles.css               Tailwind imports + custom CSS variables/components
 ```
 
-2. Mở file `index.html` trong trình duyệt web để sử dụng ứng dụng.
+## Development
 
-Hoặc truy cập phiên bản trực tuyến tại: [https://zero-gpx-route.ndanhkhoi.name.vn](https://zero-gpx-route.ndanhkhoi.name.vn)
+```bash
+npm install
+npm run dev      # Vite dev server
+npm run build    # TypeScript check + production build
+npm run preview  # Serve production build locally
+```
 
-## Tương thích với thiết bị di động
+## Hướng dẫn sử dụng
 
-Ứng dụng được thiết kế để hoạt động trên nhiều loại thiết bị khác nhau:
-- Máy tính để bàn/laptop
-- Máy tính bảng
-- Điện thoại di động (Android, iOS)
-
-Giao diện người dùng sẽ tự điều chỉnh để phù hợp với kích thước màn hình của thiết bị, mang lại trải nghiệm người dùng tốt nhất trên mọi nền tảng.
-
-## Tài liệu hướng dẫn
-
-Xem hướng dẫn sử dụng chi tiết tại [USER_GUIDE.md](USER_GUIDE.md)
+Xem chi tiết tại [USER_GUIDE.md](USER_GUIDE.md).
 
 ## Giấy phép
 
-Dự án này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
+Dự án được phân phối dưới giấy phép ISC. Xem file `LICENSE` để biết thêm chi tiết.
 
-## Lưu ý
-
-Dự án này được phát triển chỉ nhằm mục đích nghiên cứu và học tập. Việc sử dụng dữ liệu giả lập để tải lên các nền tảng theo dõi hoạt động thể thao có thể vi phạm điều khoản sử dụng của các nền tảng đó.
+> [!NOTE]
+> Dự án này được phát triển chỉ nhằm mục đích nghiên cứu và học tập. Việc sử dụng dữ liệu giả lập để tải lên các nền tảng theo dõi hoạt động thể thao có thể vi phạm điều khoản sử dụng của các nền tảng đó.
