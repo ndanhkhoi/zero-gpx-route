@@ -1,0 +1,33 @@
+{
+  "name": "zero-gpx-route",
+  "version": "1.0.0",
+  "description": "Zero GPX Route Generator là một công cụ trực tuyến cho phép người dùng vẽ và tạo ra các tuyến đường chạy bộ giả lập dưới định dạng GPX để tải lên các ứng dụng theo dõi hoạt động thể thao như Strava, Garmin Connect, và các ứng dụng tương tự.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ndanhkhoi/zero-gpx-route.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ndanhkhoi/zero-gpx-route/issues"
+  },
+  "homepage": "https://github.com/ndanhkhoi/zero-gpx-route#readme",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "maplibre-gl": "^5.21.1"
+  }
+}

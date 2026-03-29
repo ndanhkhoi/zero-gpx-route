@@ -1,0 +1,349 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@theme {
+  --font-barlow: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-barlow-condensed: 'Barlow Condensed', 'Barlow', sans-serif;
+
+  --color-surface: #182236;
+  --color-surface-soft: #1f2b44;
+  --color-border: #2b3a5b;
+  --color-primary: #f97316;
+  --color-primary-hover: #fb923c;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+}
+
+body {
+  font-family: var(--font-barlow);
+  color: var(--color-slate-100);
+  background: radial-gradient(circle at top right, #1f2b44 0%, #0b1220 45%, #080d18 100%);
+  opacity: 0;
+  animation: page-fade-in 500ms ease 100ms forwards;
+}
+
+@keyframes page-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+h1, h2 {
+  font-family: var(--font-barlow-condensed);
+  letter-spacing: 0.02em;
+}
+
+/* MapLibre controls dark theme */
+.maplibregl-ctrl-group {
+  background: rgba(24, 34, 54, 0.75) !important;
+  border: 1px solid rgba(43, 58, 91, 0.5) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden;
+}
+
+.maplibregl-ctrl-group button {
+  filter: invert(0.9);
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.maplibregl-ctrl-group button:hover {
+  background: rgba(249, 115, 22, 0.15) !important;
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(24, 34, 54, 0.75) !important;
+  color: var(--color-slate-400) !important;
+  font-size: 10px !important;
+}
+
+.maplibregl-ctrl-attrib .maplibregl-ctrl-attrib-button {
+  filter: invert(1) brightness(1.5) !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: var(--color-primary) !important;
+}
+
+/* Dark modal */
+.dark-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0);
+  opacity: 0;
+  transition: opacity 200ms ease, background 200ms ease, backdrop-filter 200ms ease;
+}
+
+.dark-modal-overlay.open {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 1;
+}
+
+.dark-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  transform: scale(0.92) translateY(10px);
+  opacity: 0;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.dark-modal-overlay.open .dark-modal {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.dark-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.dark-modal-body {
+  margin-bottom: 1.5rem;
+  color: var(--color-slate-300);
+}
+
+.dark-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Route marker */
+.route-marker {
+  background: none;
+  border: none;
+}
+
+.marker-dot {
+  width: 14px;
+  height: 14px;
+  background: var(--color-primary);
+  border: 2.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+}
+
+.marker-dot:active {
+  cursor: grabbing;
+}
+
+/* Date/time input icons */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.5);
+  cursor: pointer;
+}
+
+/* Draw status */
+#draw-status.is-drawing {
+  background: rgba(249, 115, 22, 0.16);
+  color: #fdba74;
+}
+
+/* Route type toggle */
+.route-type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.route-type-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+  background: transparent;
+  border: none;
+  color: var(--color-slate-500);
+  position: relative;
+}
+
+.route-type-btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.route-type-btn:hover:not(.active) {
+  color: var(--color-slate-300);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.route-type-btn.active {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--color-primary);
+}
+
+.route-type-btn.active + .route-type-btn::after,
+.route-type-btn:has(+ .route-type-btn.active)::after {
+  background: transparent;
+}
+
+/* Draw mode toggle */
+.draw-mode-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.draw-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+  background: transparent;
+  border: none;
+  color: var(--color-slate-500);
+  position: relative;
+}
+
+.draw-mode-btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.draw-mode-btn:hover:not(.active) {
+  color: var(--color-slate-300);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.draw-mode-btn.active {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--color-primary);
+}
+
+.draw-mode-btn.active + .draw-mode-btn::after,
+.draw-mode-btn:has(+ .draw-mode-btn.active)::after {
+  background: transparent;
+}
+
+/* Toolbar buttons */
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+  white-space: nowrap;
+}
+
+.toolbar-btn-primary {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #fff;
+}
+
+.toolbar-btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.toolbar-btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.toolbar-btn-export {
+  min-height: 34px;
+  padding: 0 14px;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #fff;
+}
+
+.toolbar-btn-export:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.toolbar-btn-export:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.toolbar-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-slate-400);
+}
+
+.toolbar-btn-ghost:hover {
+  color: #fff;
+  border-color: var(--color-danger);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Map responsive */
+@media (max-width: 1180px) {
+  #map {
+    min-height: 470px;
+    height: 58vh;
+  }
+}
+
+@media (max-width: 768px) {
+  #map {
+    min-height: 340px;
+    height: 52vh;
+  }
+}
+
+@media (max-width: 460px) {
+  #map {
+    min-height: 300px;
+    height: 44vh;
+    border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}
