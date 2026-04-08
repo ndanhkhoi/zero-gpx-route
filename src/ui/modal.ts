@@ -37,22 +37,59 @@ function createModal(title: string, body: string, buttons: ModalButton[]): HTMLD
   return modal
 }
 
+function parseTransitionTimeToMs(value: string): number {
+  const trimmed = value.trim()
+  if (trimmed.endsWith('ms')) return Number.parseFloat(trimmed)
+  if (trimmed.endsWith('s')) return Number.parseFloat(trimmed) * 1000
+  return 0
+}
+
+function dismissOverlay(overlay: HTMLDivElement) {
+  if (overlay.dataset.dismissing === '1') return
+  overlay.dataset.dismissing = '1'
+  overlay.classList.remove('open')
+
+  let removed = false
+  const removeOverlay = () => {
+    if (removed) return
+    removed = true
+    overlay.removeEventListener('transitionend', onTransitionEnd)
+    overlay.remove()
+  }
+
+  const onTransitionEnd = (e: TransitionEvent) => {
+    if (e.target !== overlay) return
+    removeOverlay()
+  }
+
+  overlay.addEventListener('transitionend', onTransitionEnd)
+
+  requestAnimationFrame(() => {
+    const styles = getComputedStyle(overlay)
+    const durations = styles.transitionDuration.split(',').map(parseTransitionTimeToMs)
+    const delays = styles.transitionDelay.split(',').map(parseTransitionTimeToMs)
+    const longestTransition = Math.max(
+      ...durations.map((duration, index) => duration + (delays[index] ?? delays[0] ?? 0)),
+      0,
+    )
+
+    if (longestTransition === 0) {
+      removeOverlay()
+      return
+    }
+
+    window.setTimeout(removeOverlay, longestTransition + 50)
+  })
+}
+
 function createModalOverlay(): HTMLDivElement {
   const el = document.createElement('div')
   el.className = 'dark-modal-overlay'
   el.addEventListener('click', (e) => {
-    if (e.target === el) {
-      el.classList.remove('open')
-      el.addEventListener('transitionend', () => el.remove(), { once: true })
-    }
+    if (e.target === el) dismissOverlay(el)
   })
   requestAnimationFrame(() => el.classList.add('open'))
   return el
-}
-
-function dismissOverlay(overlay: HTMLDivElement) {
-  overlay.classList.remove('open')
-  overlay.addEventListener('transitionend', () => overlay.remove(), { once: true })
 }
 
 export function showAlert(message: string) {
@@ -66,22 +103,24 @@ export function showAlert(message: string) {
 
 export function showConfirm(message: string, callback: (ok: boolean) => void) {
   const overlay = createModalOverlay()
+  let resolved = false
+  const resolveOnce = (ok: boolean) => {
+    if (resolved) return
+    resolved = true
+    dismissOverlay(overlay)
+    callback(ok)
+  }
+
   const modal = createModal('Xác nhận', message, [
     {
       text: 'Hủy',
       primary: false,
-      action: () => {
-        dismissOverlay(overlay)
-        callback(false)
-      },
+      action: () => resolveOnce(false),
     },
     {
       text: 'Đồng ý',
       primary: true,
-      action: () => {
-        dismissOverlay(overlay)
-        callback(true)
-      },
+      action: () => resolveOnce(true),
     },
   ])
   overlay.appendChild(modal)
