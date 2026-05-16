@@ -4,5 +4,18 @@ export interface LatLng {
   routeIndex?: number
 }
 
-export type DrawMode = 'click' | 'freehand'
 export type RouteType = 'run' | 'walk'
+
+export interface AnchorSegment {
+  kind: 'anchor'
+  id: string
+  point: LatLng
+}
+
+interface StrokeSegment {
+  kind: 'stroke'
+  id: string
+  points: LatLng[]
+}
+
+export type DrawSegment = AnchorSegment | StrokeSegment

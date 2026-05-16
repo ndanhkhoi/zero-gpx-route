@@ -1,7 +1,7 @@
 import type maplibregl from 'maplibre-gl'
 import type { LatLng } from '../types/route'
 
-export function ensureRouteLayer(map: maplibregl.Map) {
+function ensureRouteLayer(map: maplibregl.Map) {
   if (map.getSource('route')) return
 
   map.addSource('route', {

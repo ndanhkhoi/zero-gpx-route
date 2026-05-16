@@ -2,8 +2,11 @@ import type { LatLng } from '../types/route'
 import { createRng } from '../shared/random'
 
 const TRANSITION_POINTS = 8
+// Low-pass smoothing factor for the per-point offset noise.
+// Closer to 1 = smoother arc; closer to 0 = more jitter.
+const OFFSET_SMOOTHING = 0.92
 
-export function buildTransitionPoints(fromPoint: LatLng, toPoint: LatLng): LatLng[] {
+function buildTransitionPoints(fromPoint: LatLng, toPoint: LatLng): LatLng[] {
   const midLat = (fromPoint.lat + toPoint.lat) / 2
   const midLng = (fromPoint.lng + toPoint.lng) / 2
 
@@ -42,14 +45,21 @@ export function buildDisplayCoords(
     const rng = createRng(42 + i * 1000)
     const offsetPoints: LatLng[] = []
 
+    // Smoothed random walk in meters (per axis) so adjacent points share noise.
+    let latOffsetMeters = signedRandom(rng) * offsetMaxMeters
+    let lngOffsetMeters = signedRandom(rng) * offsetMaxMeters
+
     routePoints.forEach((point) => {
-      const randomOffset = offsetMinMeters + rng() * (offsetMaxMeters - offsetMinMeters)
-      const latDirection = rng() > 0.5 ? 1 : -1
-      const lngDirection = rng() > 0.5 ? 1 : -1
+      const targetMagnitude = offsetMinMeters + rng() * (offsetMaxMeters - offsetMinMeters)
+      const targetLat = signedRandom(rng) * targetMagnitude
+      const targetLng = signedRandom(rng) * targetMagnitude
+
+      latOffsetMeters = latOffsetMeters * OFFSET_SMOOTHING + targetLat * (1 - OFFSET_SMOOTHING)
+      lngOffsetMeters = lngOffsetMeters * OFFSET_SMOOTHING + targetLng * (1 - OFFSET_SMOOTHING)
 
       offsetPoints.push({
-        lat: point.lat + latDirection * randomOffset * metersToDegreesLat,
-        lng: point.lng + lngDirection * randomOffset * metersToDegreesLng,
+        lat: point.lat + latOffsetMeters * metersToDegreesLat,
+        lng: point.lng + lngOffsetMeters * metersToDegreesLng,
         routeIndex: i,
       })
     })
@@ -69,4 +79,8 @@ export function buildDisplayCoords(
   }
 
   return displayCoords
+}
+
+function signedRandom(rng: () => number): number {
+  return rng() * 2 - 1
 }
