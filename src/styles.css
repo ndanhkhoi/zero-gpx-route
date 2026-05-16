@@ -192,7 +192,8 @@ h1, h2 {
   box-shadow: 0 0 0 1.5px var(--color-primary) inset;
 }
 
-.datetime-trigger:disabled {
+.datetime-trigger:disabled,
+.datetime-trigger.is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -243,7 +244,29 @@ h1, h2 {
   width: 100%;
   height: 100%;
   opacity: 0;
-  pointer-events: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+}
+
+.datetime-native::-webkit-calendar-picker-indicator,
+.datetime-native::-webkit-date-and-time-value {
+  opacity: 0;
+}
+
+.datetime-native:disabled {
+  cursor: not-allowed;
+}
+
+.datetime-trigger:focus-within {
+  background: rgba(11, 18, 32, 0.78);
+  box-shadow: 0 0 0 1.5px var(--color-primary) inset;
 }
 
 /* Date/time input */
