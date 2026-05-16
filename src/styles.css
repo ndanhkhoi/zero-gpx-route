@@ -119,11 +119,13 @@ h1, h2 {
   color: var(--color-primary) !important;
 }
 
-/* Route marker */
+/* Route marker — keep this minimal so MapLibre's own
+   `position: absolute; top:0; left:0` from `.maplibregl-marker` wins.
+   Setting `position: relative` here puts markers in the document flow,
+   which makes each subsequent marker drift by the previous marker's width. */
 .route-marker {
   background: none;
   border: none;
-  position: relative;
 }
 
 .marker-dot {

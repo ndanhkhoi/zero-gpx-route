@@ -21,16 +21,20 @@ export function flattenSegments(segments: DrawSegment[]): LatLng[] {
 
     if (seg.points.length === 0) continue
 
+    const stroke = seg.points.length >= 3
+      ? chaikinSmooth(seg.points, SMOOTH_PASSES)
+      : seg.points
+
     if (last) {
-      out.push(...interpolatePoints(last, seg.points[0], INTERPOLATION_COUNT))
-      out.push(...seg.points.slice(1))
+      out.push(...interpolatePoints(last, stroke[0], INTERPOLATION_COUNT))
+      out.push(...stroke.slice(1))
     } else {
-      out.push(...seg.points)
+      out.push(...stroke)
     }
-    last = seg.points[seg.points.length - 1]
+    last = stroke[stroke.length - 1]
   }
 
-  return chaikinSmooth(out, SMOOTH_PASSES)
+  return out
 }
 
 // Chaikin's corner-cutting: each pair (P_i, P_i+1) becomes (Q, R)
