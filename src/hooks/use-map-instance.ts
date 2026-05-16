@@ -33,6 +33,7 @@ export function useMapInstance(): UseMapInstanceResult {
 
     instance.on('load', () => {
       setMap(instance)
+      geolocate.trigger()
     })
 
     return () => {
